@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Hupsclick">
+    <meta name="publisher" content="Hupsclick">
+    <meta name="description" content="HUPSCLICK FOTO VIDEO AUFNAHME STUDIO">
+    <meta name="keywords" content="HUPSCLICK, FOTO, VIDEO, AUFNAHME, STUDIO, Deutsch">
+    <meta name="copyright" content="Hupsclick">
+    <meta property="og:title" content="HUPSCLICK FOTO VIDEO AUFNAHME STUDIO">
+    <meta property="og:description" content="HUPSCLICK FOTO VIDEO AUFNAHME STUDIO">
+    <meta property="og:type" content="website">
+    <link rel="shortcut icon" href="assets/icon.ico">
+    <title>🐬 Cam</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #1a1a2e;
+            --bg-card: #16213e;
+            --accent-primary: #00ff88;
+            --accent-secondary: #0099ff;
+            --text-primary: #ffffff;
+            --text-secondary: #aaaaaa;
+            --danger: #ff4757;
+            --shadow: rgba(0, 0, 0, 0.5);
+        }
+
+        body.light-mode {
+            --bg-primary: #f5f5f5;
+            --bg-secondary: #ffffff;
+            --bg-card: #e8e8e8;
+            --accent-primary: #00cc6a;
+            --accent-secondary: #0077cc;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666666;
+            --danger: #ff3838;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px 15px;
+            background: var(--bg-secondary);
+            border-radius: 15px;
+            box-shadow: 0 5px 20px var(--shadow);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo h1 {
+            font-size: 26px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .icon-btn {
+            width: 43px;
+            height: 43px;
+            border: none;
+            border-radius: 10px;
+            background: var(--bg-card);
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .icon-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px var(--shadow);
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+        }
+
+        .main-container {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 20px;
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        .camera-section {
+            background: var(--bg-secondary);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px var(--shadow);
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            aspect-ratio: 16/9;
+        }
+
+        #webcam {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .countdown-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 120px;
+            font-weight: bold;
+            color: var(--accent-primary);
+            z-index: 10;
+        }
+
+        .countdown-overlay.active {
+            display: flex;
+        }
+
+        .recording-indicator {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--danger);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            animation: pulse 1.5s infinite;
+        }
+
+        .recording-indicator.active {
+            display: flex;
+        }
+
+        .recording-dot {
+            width: 10px;
+            height: 10px;
+            background: white;
+            border-radius: 50%;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .mode-switch {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .mode-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid var(--bg-card);
+            border-radius: 10px;
+            background: var(--bg-card);
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .mode-btn.active {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+            border-color: var(--accent-primary);
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .control-btn {
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: var(--bg-primary);
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.4);
+        }
+
+        .control-btn:active {
+            transform: translateY(0);
+        }
+
+        .control-btn:disabled {
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .main-action {
+            grid-column: 1 / -1;
+            padding: 15px;
+            font-size: 18px;
+        }
+
+        .sidebar {
+            background: var(--bg-secondary);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px var(--shadow);
+            max-height: calc(100vh - 140px);
+            overflow-y: auto;
+        }
+
+        .sidebar h3 {
+            margin-bottom: 20px;
+            color: var(--accent-primary);
+            font-size: 18px;
+        }
+
+        .option-group {
+            margin-bottom: 25px;
+        }
+
+        .option-label {
+            display: block;
+            margin-bottom: 10px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .interval-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .interval-btn {
+            padding: 10px;
+            border: 2px solid var(--bg-card);
+            border-radius: 8px;
+            background: var(--bg-card);
+            color: var(--text-primary);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .interval-btn:hover {
+            border-color: var(--accent-primary);
+        }
+
+        .interval-btn.active {
+            background: var(--accent-primary);
+            color: var(--bg-primary);
+            border-color: var(--accent-primary);
+        }
+
+        .status-info {
+            background: var(--bg-card);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .status-info h4 {
+            margin-bottom: 15px;
+            color: var(--accent-primary);
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .status-label {
+            color: var(--text-secondary);
+        }
+
+        .status-value {
+            color: var(--accent-primary);
+            font-weight: bold;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 700px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            color: var(--accent-primary);
+        }
+
+        .close-btn {
+            width: 35px;
+            height: 35px;
+            border: none;
+            border-radius: 8px;
+            background: var(--danger);
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .modal-content h3 {
+            color: var(--accent-primary);
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .modal-content p {
+            line-height: 1.6;
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+        }
+
+        .modal-content a {
+            color: var(--accent-secondary);
+            text-decoration: none;
+        }
+
+        .modal-content a:hover {
+            text-decoration: underline;
+        }
+
+        .screensaver-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #000;
+            z-index: 2000;
+            cursor: pointer;
+        }
+
+        .screensaver-overlay.active {
+            display: block;
+        }
+
+        #screensaverVideo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .screensaver-message {
+            position: absolute;
+            bottom: 30px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            color: white;
+            font-size: 14px;
+            background: rgba(0,0,0,0.5);
+            padding: 10px;
+        }
+
+ 		/* Footer */
+		:root {
+        --text-secondary: #c4a86a;
+        }
+
+		.screensaver-frame {
+			width: 100%;
+			height: 100%;
+			border: none;
+		}
+		
+		.footer {
+		  text-align: center;
+		  padding: 0.05rem 0.05rem;
+		  color: var(--text-secondary);
+		  font-size: 0.9rem;
+		}
+
+/* ===== MOBILE FIX ===== */
+@media (max-width: 768px) {
+			.footer {
+				margin-top: 20px;
+			}
+		}	
+		
+		@media (max-width: 480px) {
+			 .footer {
+				margin-top: 10px;
+			}
+		}
+		
+        @media (max-width: 1024px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+            .logo h1 {
+                font-size: 18px;
+            }
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <h1>🐬Cam</h1>
+        </div>
+        <div class="header-controls">
+            <button class="icon-btn" id="darkModeBtn" title="Dark/Light Mode">🌓</button>
+            <button class="icon-btn" id="screensaverBtn" title="Bildschirmschoner">🎬</button>
+            <button class="icon-btn" id="impressumBtn" title="Impressum">ℹ️</button>
+            <button class="icon-btn" id="datenschutzBtn" title="Datenschutz">🔒</button>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="camera-section">
+            <div class="video-container">
+                <video id="webcam" autoplay playsinline muted></video>
+                <div class="countdown-overlay" id="countdownOverlay">0</div>
+                <div class="recording-indicator" id="recordingIndicator">
+                    <div class="recording-dot"></div>
+                    <span id="recordingTime">00:00</span>
+                </div>
+            </div>
+
+            <div class="mode-switch">
+                <button class="mode-btn active" id="photoModeBtn">📸 Foto-Modus</button>
+                <button class="mode-btn" id="videoModeBtn">🎥 Video-Modus</button>
+            </div>
+
+            <div class="controls-grid">
+                <button class="control-btn main-action" id="captureBtn">📸 Foto aufnehmen</button>
+                <button class="control-btn" id="timerBtn">⏱️ Timer (10s)</button>
+                <button class="control-btn" id="intervalBtn">🔄 Intervall starten</button>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <h3>⚙️ Einstellungen</h3>
+            
+            <div class="option-group">
+                <label class="option-label">📷 Foto-Intervall</label>
+                <div class="interval-buttons" id="photoIntervalBtns">
+                    <button class="interval-btn" data-interval="3000">3 Sek</button>
+                    <button class="interval-btn" data-interval="5000">5 Sek</button>
+                    <button class="interval-btn active" data-interval="10000">10 Sek</button>
+                    <button class="interval-btn" data-interval="30000">30 Sek</button>
+                    <button class="interval-btn" data-interval="60000">1 Min</button>
+                    <button class="interval-btn" data-interval="300000">5 Min</button>
+                </div>
+            </div>
+
+            <div class="option-group">
+                <label class="option-label">🎥 Video-Intervall</label>
+                <div class="interval-buttons" id="videoIntervalBtns">
+                    <button class="interval-btn" data-interval="5000">5 Sek</button>
+                    <button class="interval-btn active" data-interval="10000">10 Sek</button>
+                    <button class="interval-btn" data-interval="30000">30 Sek</button>
+                    <button class="interval-btn" data-interval="60000">1 Min</button>
+                    <button class="interval-btn" data-interval="300000">5 Min</button>
+                </div>
+            </div>
+
+            <div class="option-group">
+                <label class="option-label">⏱️ Video-Länge</label>
+                <div class="interval-buttons" id="videoLengthBtns">
+                    <button class="interval-btn" data-length="5000">5 Sek</button>
+                    <button class="interval-btn active" data-length="10000">10 Sek</button>
+                    <button class="interval-btn" data-length="30000">30 Sek</button>
+                    <button class="interval-btn" data-length="60000">1 Min</button>
+                </div>
+            </div>
+
+            <div class="status-info">
+                <h4>📊 Status</h4>
+                <div class="status-item">
+                    <span class="status-label">Modus:</span>
+                    <span class="status-value" id="currentMode">Foto</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Intervall aktiv:</span>
+                    <span class="status-value" id="intervalStatus">❌ Nein</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Aufnahmen:</span>
+                    <span class="status-value" id="captureCount">0</span>
+                </div>
+                <div class="status-item">
+                    <span class="status-label">Kamera:</span>
+                    <span class="status-value" id="cameraStatus">✅ Aktiv</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Impressum Modal -->
+ <div class="modal" id="impressumModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Impressum</h2>
+        <button class="close-btn" onclick="closeModal('impressumModal')">×</button>
+      </div>
+	  
+      <h3 style="color: var(--accent-primary); margin-top: 20px;">Hinweis</h3>
+      <p>Dies ist eine rein Private Seite!<br>
+      </p>
+      
+      <h3 style="color: var(--accent-primary); margin-top: 20px;">Angaben gemäß § 5 TMG</h3>
+      <p><strong>🐬 Cam</strong><br>
+      Manfred Häcker<br>
+      Feldstraße 6<br>
+      17153 Stavenhagen<br>
+      Deutschland</p>
+      
+      <h3 style="color: var(--accent-primary); margin-top: 20px;">Kontakt</h3>
+      <p>E-Mail: regiemail@gmx.de<br>
+      </p>
+      
+      <h3 style="color: var(--accent-primary); margin-top: 20px;">Redaktionell verantwortlich</h3>
+      <p>Manfred Häcker<br>
+      Feldstraße 6<br>
+      17153 Stavenhagen</p>
+      
+      <h3 style="color: var(--accent-primary); margin-top: 20px;">EU-Streitschlichtung</h3>
+      <p>Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit: 
+	  <a href="https://consumer-redress.ec.europa.eu/site-relocation_en?prefLang=de&etrans=de" target="_blank" style="color: var(--accent-secondary);">https://consumer-redress.ec.europa.eu/site-relocation_en?prefLang=de&etrans=de</a><br>
+      <br>oder in English</br>
+	  <p> 
+      <a href="https://ec.europa.eu/consumers/odr/" target="_blank" style="color: var(--accent-secondary);">https://ec.europa.eu/consumers/odr/</a><br>
+      Unsere E-Mail-Adresse finden Sie oben im Impressum.</p>
+      
+      <h3 style="color: var(--accent-primary); margin-top: 20px;">Verbraucherstreitbeilegung/Universalschlichtungsstelle</h3>
+      <p>Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.</p>
+      
+      <h3 style="color: var(--accent-primary); margin-top: 20px;">Verwendete Schriftarten</h3>
+      <p>Diese Webseite verwendet die Systemschriftart "Segoe UI" sowie Fallback-Schriftarten: Tahoma, Geneva, Verdana und sans-serif.</p>
+      
+      <h3 style="color: var(--accent-primary); margin-top: 20px;">Haftungsausschluss</h3>
+      <p><strong>Haftung für Inhalte</strong><br>
+      Als Diensteanbieter sind wir gemäß § 7 Abs.1 TMG für eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich. Nach §§ 8 bis 10 TMG sind wir als Diensteanbieter jedoch nicht verpflichtet, übermittelte oder gespeicherte fremde Informationen zu überwachen oder nach Umständen zu forschen, die auf eine rechtswidrige Tätigkeit hinweisen.</p>
+      
+      <p>Verpflichtungen zur Entfernung oder Sperrung der Nutzung von Informationen nach den allgemeinen Gesetzen bleiben hiervon unberührt. Eine diesbezügliche Haftung ist jedoch erst ab dem Zeitpunkt der Kenntnis einer konkreten Rechtsverletzung möglich. Bei Bekanntwerden von entsprechenden Rechtsverletzungen werden wir diese Inhalte umgehend entfernen.</p>
+      
+      <p><strong>Haftung für Links</strong><br>
+      Unser Angebot enthält Links zu externen Websites Dritter, auf deren Inhalte wir keinen Einfluss haben. Deshalb können wir für diese fremden Inhalte auch keine Gewähr übernehmen. Für die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber der Seiten verantwortlich.</p>
+      
+      <p><strong>Urheberrecht</strong><br>
+      Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb der Grenzen des Urheberrechtes bedürfen der schriftlichen Zustimmung des jeweiligen Autors bzw. Erstellers.</p>
+    </div>
+  </div>
+
+    <!-- Datenschutz Modal -->
+    <div class="modal" id="datenschutzModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Datenschutzerklärung</h2>
+                <button class="close-btn" onclick="closeModal('datenschutzModal')">×</button>
+            </div>
+            
+            <h3>1. Datenschutz auf einen Blick</h3>
+            <p><strong>Allgemeine Hinweise</strong><br>
+            Die folgenden Hinweise geben einen einfachen Überblick darüber, was mit Ihren personenbezogenen Daten passiert, wenn Sie diese Website nutzen. Personenbezogene Daten sind alle Daten, mit denen Sie persönlich identifiziert werden können.</p>
+            
+            <h3>2. Datenerfassung auf dieser Website</h3>
+            <p><strong>Wer ist verantwortlich für die Datenerfassung auf dieser Website?</strong><br>
+            Die Datenverarbeitung auf dieser Website erfolgt durch den Websitebetreiber. Dessen Kontaktdaten können Sie dem Impressum dieser Website entnehmen.</p>
+            
+            <p><strong>Wie erfassen wir Ihre Daten?</strong><br>
+            Ihre Daten werden zum einen dadurch erhoben, dass Sie uns diese mitteilen. Hierbei kann es sich z.B. um Daten handeln, die Sie in ein Kontaktformular eingeben.</p>
+            
+            <h3>3. Kamera und Mikrofon</h3>
+            <p><strong>Art und Zweck der Verarbeitung</strong><br>
+            Diese Anwendung nutzt Ihre Webcam und Ihr Mikrofon ausschließlich lokal in Ihrem Browser. Es werden keine Daten an externe Server übertragen.</p>
+            
+            <p><strong>Verarbeitete Daten:</strong><br>
+            • Video-Stream von Ihrer Webcam (wird nur lokal verarbeitet)<br>
+            • Audio-Stream von Ihrem Mikrofon (wird nur lokal verarbeitet)<br>
+            • Alle Foto- und Videoaufnahmen werden direkt auf Ihr Gerät heruntergeladen<br>
+            • Es erfolgt keine Speicherung auf unseren Servern</p>
+            
+            <h3>4. Ihre Rechte</h3>
+            <p>Sie haben folgende Rechte:<br>
+            • Auskunft über Ihre gespeicherten Daten (Art. 15 DSGVO)<br>
+            • Berichtigung unrichtiger Daten (Art. 16 DSGVO)<br>
+            • Löschung Ihrer Daten (Art. 17 DSGVO)<br>
+            • Einschränkung der Verarbeitung (Art. 18 DSGVO)<br>
+            • Datenübertragbarkeit (Art. 20 DSGVO)<br>
+            • Widerspruch gegen die Verarbeitung (Art. 21 DSGVO)</p>
+            
+            <h3>5. Datensicherheit</h3>
+            <p>Wir verwenden SSL-Verschlüsselung und speichern keine personenbezogenen Daten auf unseren Servern. Alle Aufnahmen verbleiben lokal auf Ihrem Gerät.</p>
+        </div>
+    </div>
+
+<!-- Bildschirmschoner Overlay -->
+<div class="screensaver-overlay" id="screensaverOverlay">
+    <iframe 
+        id="screensaverFrame"
+        src="assets/retro.html"
+        class="screensaver-frame"
+    ></iframe>
+
+    <div class="screensaver-message">
+        Bildschirmschoner aktiv - Klicken zum Beenden
+    </div>
+</div>
+
+
+    <div class="footer">
+        <p>🐬 Cam © 2026 HUPSCLICK</p>
+    </div>
+	
+    <script>
+        // DOM Elements
+        let stream = null;
+        let mediaRecorder = null;
+        let recordedChunks = [];
+        let isRecording = false;
+        let currentMode = 'photo';
+        let intervalId = null;
+        let photoInterval = 10000;
+        let videoInterval = 10000;
+        let videoLength = 10000;
+        let captureCounter = 0;
+        let recordingStartTime = 0;
+        let recordingTimer = null;
+        let screensaverTimer = null;
+        let screensaverActive = false;
+        let inactivityTimeout = 30000; // 30 Sekunden Inaktivität für Screensaver
+
+        const webcam = document.getElementById('webcam');
+        const captureBtn = document.getElementById('captureBtn');
+        const timerBtn = document.getElementById('timerBtn');
+        const intervalBtn = document.getElementById('intervalBtn');
+        const photoModeBtn = document.getElementById('photoModeBtn');
+        const videoModeBtn = document.getElementById('videoModeBtn');
+        const countdownOverlay = document.getElementById('countdownOverlay');
+        const recordingIndicator = document.getElementById('recordingIndicator');
+        const recordingTime = document.getElementById('recordingTime');
+        const screensaverOverlay = document.getElementById('screensaverOverlay');
+        const screensaverVideo = document.getElementById('screensaverVideo');
+
+        // Dark Mode Funktion
+        function toggleDarkMode() {
+            document.body.classList.toggle('light-mode');
+            localStorage.setItem('darkMode', document.body.classList.contains('light-mode'));
+        }
+
+        // Dark Mode initialisieren
+        function initDarkMode() {
+            const savedMode = localStorage.getItem('darkMode');
+            if (savedMode === 'true') {
+                document.body.classList.add('light-mode');
+            }
+            document.getElementById('darkModeBtn').addEventListener('click', toggleDarkMode);
+        }
+
+        // Format Datum für Dateinamen
+        function formatDateTime() {
+            const d = new Date();
+            return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}_${String(d.getHours()).padStart(2,'0')}-${String(d.getMinutes()).padStart(2,'0')}-${String(d.getSeconds()).padStart(2,'0')}`;
+        }
+
+        // Kamera initialisieren
+        async function initCamera() {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        width: { ideal: 1920 },
+                        height: { ideal: 1080 }
+                    },
+                    audio: true
+                });
+                webcam.srcObject = stream;
+                document.getElementById('cameraStatus').innerHTML = '✅ Aktiv';
+            } catch (err) {
+                console.error("Kamera-Fehler:", err);
+                document.getElementById('cameraStatus').innerHTML = '❌ Kein Zugriff';
+                alert("Kamera-/Mikrofonzugriff verweigert oder nicht verfügbar.");
+            }
+        }
+
+        // Foto aufnehmen
+        function takePhoto() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 1920;
+            canvas.height = 1080;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(webcam, 0, 0, 1920, 1080);
+            
+            canvas.toBlob((blob) => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `foto_${formatDateTime()}.png`;
+                a.click();
+                URL.revokeObjectURL(url);
+                captureCounter++;
+                updateStatus();
+                resetInactivityTimer();
+            }, 'image/png');
+        }
+
+        // Countdown Timer
+        function startCountdown() {
+            let count = 10;
+            countdownOverlay.classList.add('active');
+            countdownOverlay.textContent = count;
+            
+            const countdownInterval = setInterval(() => {
+                count--;
+                countdownOverlay.textContent = count;
+                if (count <= 0) {
+                    clearInterval(countdownInterval);
+                    countdownOverlay.classList.remove('active');
+                    if (currentMode === 'photo') {
+                        takePhoto();
+                    } else {
+                        startVideoRecording();
+                    }
+                }
+            }, 1000);
+        }
+
+        // Videoaufnahme starten
+        function startVideoRecording() {
+            if (!stream) {
+                alert("Kein Kamerastream verfügbar.");
+                return;
+            }
+            
+            recordedChunks = [];
+            try {
+                mediaRecorder = new MediaRecorder(stream, {
+                    mimeType: 'video/webm',
+                    videoBitsPerSecond: 5000000
+                });
+            } catch(e) {
+                mediaRecorder = new MediaRecorder(stream);
+            }
+            
+            mediaRecorder.ondataavailable = (event) => {
+                if (event.data.size > 0) recordedChunks.push(event.data);
+            };
+            
+            mediaRecorder.onstop = () => {
+                const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `video_${formatDateTime()}.webm`;
+                a.click();
+                URL.revokeObjectURL(url);
+                captureCounter++;
+                updateStatus();
+                resetInactivityTimer();
+            };
+            
+            mediaRecorder.start();
+            isRecording = true;
+            recordingIndicator.classList.add('active');
+            recordingStartTime = Date.now();
+            captureBtn.textContent = "⏹️ Aufnahme stoppen";
+            
+            recordingTimer = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - recordingStartTime) / 1000);
+                const m = String(Math.floor(elapsed / 60)).padStart(2, '0');
+                const s = String(elapsed % 60).padStart(2, '0');
+                recordingTime.textContent = `${m}:${s}`;
+            }, 1000);
+            
+            // Automatischer Stop nach eingestellter Länge
+            setTimeout(() => {
+                if (isRecording) stopVideoRecording();
+            }, videoLength);
+        }
+        
+        // Videoaufnahme stoppen
+        function stopVideoRecording() {
+            if (mediaRecorder && isRecording) {
+                mediaRecorder.stop();
+                isRecording = false;
+                recordingIndicator.classList.remove('active');
+                clearInterval(recordingTimer);
+                captureBtn.textContent = "🎥 Video aufnehmen";
+            }
+        }
+        
+        // Intervall starten/stoppen
+        function toggleInterval() {
+            if (intervalId) {
+                clearInterval(intervalId);
+                intervalId = null;
+                intervalBtn.textContent = "🔄 Intervall starten";
+                document.getElementById('intervalStatus').innerHTML = '❌ Nein';
+            } else {
+                const interval = currentMode === 'photo' ? photoInterval : videoInterval;
+                intervalId = setInterval(() => {
+                    if (currentMode === 'photo') {
+                        takePhoto();
+                    } else {
+                        startVideoRecording();
+                    }
+                }, interval);
+                intervalBtn.textContent = "⏹️ Intervall stoppen";
+                document.getElementById('intervalStatus').innerHTML = '✅ Ja (alle ' + (interval/1000) + 's)';
+            }
+        }
+        
+        // Modus wechseln
+        function switchMode(mode) {
+            currentMode = mode;
+            if (intervalId) toggleInterval();
+            
+            if (mode === 'photo') {
+                photoModeBtn.classList.add('active');
+                videoModeBtn.classList.remove('active');
+                captureBtn.textContent = "📸 Foto aufnehmen";
+                document.getElementById('currentMode').innerHTML = 'Foto';
+            } else {
+                photoModeBtn.classList.remove('active');
+                videoModeBtn.classList.add('active');
+                captureBtn.textContent = "🎥 Video aufnehmen";
+                document.getElementById('currentMode').innerHTML = 'Video';
+            }
+        }
+        
+        // Status aktualisieren
+        function updateStatus() {
+            document.getElementById('captureCount').innerHTML = captureCounter;
+        }
+        
+        // Bildschirmschoner
+function startScreensaver() {
+    document.getElementById("screensaverOverlay").style.display = "block";
+}
+
+function stopScreensaver() {
+    document.getElementById("screensaverOverlay").style.display = "none";
+}
+
+        
+        function resetInactivityTimer() {
+            if (screensaverTimer) clearTimeout(screensaverTimer);
+            screensaverTimer = setTimeout(startScreensaver, inactivityTimeout);
+        }
+        
+        // Event Listener für Benutzeraktivität
+        function setupInactivityTimer() {
+            const events = ['mousemove', 'mousedown', 'keypress', 'scroll', 'click'];
+            events.forEach(event => {
+                document.addEventListener(event, () => {
+                    if (screensaverActive) stopScreensaver();
+                    else resetInactivityTimer();
+                });
+            });
+            resetInactivityTimer();
+        }
+        
+        // Intervall Buttons
+        function setupIntervalButtons() {
+            document.querySelectorAll('#photoIntervalBtns .interval-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('#photoIntervalBtns .interval-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    photoInterval = parseInt(btn.dataset.interval);
+                    if (currentMode === 'photo' && intervalId) toggleInterval();
+                });
+            });
+            
+            document.querySelectorAll('#videoIntervalBtns .interval-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('#videoIntervalBtns .interval-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    videoInterval = parseInt(btn.dataset.interval);
+                    if (currentMode === 'video' && intervalId) toggleInterval();
+                });
+            });
+            
+            document.querySelectorAll('#videoLengthBtns .interval-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('#videoLengthBtns .interval-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    videoLength = parseInt(btn.dataset.length);
+                });
+            });
+        }
+        
+        // Modals
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+        
+        window.closeModal = function(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        };
+        
+        // Event Listener für Buttons
+        captureBtn.addEventListener('click', () => {
+            if (currentMode === 'photo') takePhoto();
+            else {
+                if (isRecording) stopVideoRecording();
+                else startVideoRecording();
+            }
+        });
+        
+        timerBtn.addEventListener('click', startCountdown);
+        intervalBtn.addEventListener('click', toggleInterval);
+        photoModeBtn.addEventListener('click', () => switchMode('photo'));
+        videoModeBtn.addEventListener('click', () => switchMode('video'));
+        
+        document.getElementById('screensaverBtn').addEventListener('click', startScreensaver);
+        screensaverOverlay.addEventListener('click', stopScreensaver);
+        document.getElementById('impressumBtn').addEventListener('click', () => openModal('impressumModal'));
+        document.getElementById('datenschutzBtn').addEventListener('click', () => openModal('datenschutzModal'));
+        
+        // Initialisierung
+        initDarkMode();
+        initCamera();
+        setupIntervalButtons();
+        setupInactivityTimer();
+    </script>
+</body>
+</html>

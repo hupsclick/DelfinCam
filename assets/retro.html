@@ -1,0 +1,1035 @@
+<!doctype html>
+<html lang="de"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Hupsclick">
+    <meta name="publisher" content="Hupsclick">
+    <meta name="description" content="HUPSCLICK UHR HUD DESIGN">
+    <meta name="keywords" content="HUPSCLICK, UHR, HUD DESIGN, Deutsch">
+    <meta name="copyright" content="Hupsclick">
+    <meta property="og:title" content="HUPSCLICK UHR HUD DESIGN">
+    <meta property="og:description" content="HUPSCLICK UHR HUD DESIGN">
+    <meta property="og:type" content="website">
+    <link rel="shortcut icon" href="assets/retro.ico">
+    <title>UHR</title>
+
+<style>
+	:root {
+	  --green: #4cff7b;
+	  --green-soft: #2fbf5a;
+	  --grid: rgba(76,255,123,0.08);
+	  --glow: 0 0 12px rgba(76,255,123,0.7);
+	  --soft-glow: 0 0 24px rgba(76,255,123,0.35);
+	}
+
+	* { margin:0; padding:0; box-sizing:border-box; }
+
+	 /* Custom Digital Font laden */
+		@font-face {
+		  font-family: 'Digital';
+		  src: url('digital.ttf') format('truetype');
+		  font-weight: normal;
+		  font-style: normal;
+		  font-display: swap;
+		}		
+		
+		body {
+		  background:black;
+		  color:var(--green);
+		  font-family: "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+		  min-height:100vh;
+		  display:flex;
+		  justify-content:center;
+		  align-items:center;
+		  padding:10px;
+		  overflow:auto;
+		}
+		
+		body::after{
+		  content:"";
+		  position:fixed;
+		  inset:0;
+
+		  background:
+			radial-gradient(
+			  circle at center,
+			  rgba(76,255,123,0.08),
+			  transparent 70%
+			);
+
+		  pointer-events:none;
+		  z-index:0;
+		}
+		
+	/* HUD-Container: passt sich Breite/Höhe an */
+	#hud {
+	  width:100%;
+	  max-width:1100px;
+      background-color:#000;
+      background-image:
+      linear-gradient(rgba(0,255,120,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,120,0.05) 1px, transparent 1px),
+      linear-gradient(rgba(0,255,120,0.15) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,120,0.15) 1px, transparent 1px);
+	  background-size:
+	  10px 10px,
+	  10px 10px,
+	  50px 50px,
+	  50px 50px;
+	  border-radius:18px;
+	  padding:20px 20px 24px;
+	  position:relative;
+	  overflow:hidden;
+	  display:grid;
+	  grid-template-rows:auto 1fr auto;
+	  gap:12px;
+	  box-shadow:
+		0 0 0 1px rgba(76,255,123,0.25),
+		0 0 40px rgba(0,0,0,0.9),
+		var(--soft-glow);
+	}
+
+	/* Vignette */
+	#hud::before{
+	  content:"";
+	  position:absolute;
+	  inset:-10%;
+
+	  background:
+		radial-gradient(
+		  circle at center,
+		  transparent 55%,
+		  rgba(0,0,0,0.7) 100%
+		);
+
+	  mix-blend-mode:multiply;
+	  z-index:20;
+	}
+
+	/* Scanlines */
+	#scanlines{
+	  position:absolute;
+	  inset:0;
+
+	  background:
+		repeating-linear-gradient(
+		  to bottom,
+		  rgba(0,0,0,0.3) 0px,
+		  rgba(0,0,0,0.3) 1px,
+		  transparent 2px,
+		  transparent 4px
+		);
+
+	  opacity:0.35;
+
+	  animation:scanMove 6s linear infinite;
+
+	  pointer-events:none;
+	  z-index:19;
+	}
+
+	@keyframes scanMove{
+
+	  from{
+		transform:translateY(0);
+	  }
+
+	  to{
+		transform:translateY(4px);
+	  }
+
+	}
+
+	/* Grid */
+	#grid {
+	  position:absolute;
+	  inset:0;
+
+	  background-image:
+		linear-gradient(to right, var(--grid) 1px, transparent 1px),
+		linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
+
+	  background-size:40px 40px;
+
+	  opacity:0.35;
+	  mix-blend-mode:screen;
+
+	  animation:gridMove 40s linear infinite;
+
+	  z-index:1;
+	}
+
+	@keyframes gridMove {
+
+	  from{
+		background-position:0 0;
+	  }
+
+	  to{
+		background-position:40px 40px;
+	  }
+
+	}
+
+	/* Corner brackets */
+	.corner {
+	  position:absolute;
+	  width:32px;
+	  height:32px;
+	  border:2px solid var(--green-soft);
+	  filter:drop-shadow(0 0 6px rgba(76,255,123,0.7));
+	  z-index:30;
+	}
+
+	.corner.tl { top:8px; left:8px; border-right:none; border-bottom:none; }
+	.corner.tr { top:8px; right:8px; border-left:none; border-bottom:none; }
+	.corner.bl { bottom:8px; left:8px; border-right:none; border-top:none; }
+	.corner.br { bottom:8px; right:8px; border-left:none; border-top:none; }
+
+	/* Header / Footer */
+	header, footer {
+	  display:flex;
+	  justify-content:space-between;
+	  gap:8px;
+	  font-family: "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+	  font-size:clamp(0.6rem,1.4vw,0.8rem);
+	  letter-spacing:0.15em;
+	  text-transform:uppercase;
+	  text-shadow:var(--glow);
+	  z-index:5;
+	  flex-wrap:wrap;
+	}
+
+	/* Main Grid */
+	main {
+	  display:grid;
+	  grid-template-columns:2fr 1.3fr;
+	  gap:26px;
+	  z-index:5;
+	}
+
+	/* Clock */
+	#clock {
+	  display:flex;
+	  flex-direction:column;
+	  justify-content:center;
+	  gap:10px;
+	}
+
+	#time {
+	  font-family: 'Digital', 'Courier New', monospace;
+	  font-size:clamp(2.6rem,6vw,4.2rem);
+	  letter-spacing:0.26em;
+	  text-shadow:0 0 10px var(--green), 0 0 30px var(--green);
+	  position:relative;
+      background: radial-gradient(ellipse at center, #000 0%, #111 50%);
+	}
+
+	#time::after {
+	  content:"●";
+	  position:absolute;
+	  right:3em;
+	  animation:blink 1s steps(1) infinite;
+	}
+
+	@keyframes blink {
+	  0%,50% { opacity:1; }
+	  51%,100% { opacity:0; }
+	}
+
+	.datetime {
+	  margin-left: 12px;
+	  font-size: 16px;
+	  padding: 6px;
+	  color: #4cff7b;
+	 background-color: black;
+     background-image: radial-gradient(
+     circle,
+     rgba(255, 255, 255, 0.2) 1px,
+     transparent 1px
+  );
+      background-size: 1rem 1rem;
+	  box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+	  border-radius: 4px;
+	  border-right: 10px #4cff7b solid;
+	  width: 350px;
+	  font-weight: 500;
+      font-family: "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+	}
+
+	.date {
+	  margin-top: 6px;
+	  font-size: 1.75em;
+	  letter-spacing:0.09em;
+	}
+
+	#date {
+	  font-family: "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+	  font-size:clamp(0.8rem,1.8vw,1rem);
+	  letter-spacing:0.2em;
+	  text-transform:uppercase;
+	  opacity:0.9;
+	}
+
+	/* Radar Hintergrund */	
+	#radar {
+	  position:absolute;
+	  left:450px;
+	  top:152px;
+	  width:198px;
+	  height:198px;
+	  pointer-events:none;
+	  z-index:2;
+	}
+
+	#radarCanvas{
+	  width:100%;
+	  height:100%;
+	}
+	
+	#radar-circle {
+	  left: -20%;
+	  width:80%;
+	  max-width:210px;
+	  aspect-ratio:1/1;
+	  background: radial-gradient(ellipse at center, #000 0%, #111 50%);
+	  border-radius:50%;
+	  border:1px solid rgba(76,255,123,0.25);
+	  position:relative;
+	  box-shadow:0 0 20px rgba(76,255,123,0.15);
+	}
+
+	#radar-sweep{
+	  position:absolute;
+	  width:100%;
+	  height:100%;
+	  border-radius:50%;
+
+	  background:
+		conic-gradient(
+		  rgba(76,255,123,0.5),
+		  rgba(76,255,123,0.15) 30%,
+		  transparent 60%
+		);
+	  animation:radar-spin 2s linear infinite;
+	  filter:blur(2px);
+	  mix-blend-mode:screen;
+	}
+
+	@keyframes radar-spin {
+	  from { transform:rotate(0deg); }
+	  to   { transform:rotate(360deg); }
+	}
+
+	#meta {
+	  font-family: "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+	  font-size:clamp(0.75rem,1.6vw,0.95rem);
+	  letter-spacing:0.18em;
+	  text-transform:uppercase;
+	  opacity:0.85;
+	}
+
+	/* Panels rechts */
+	#right {
+	  display:grid;
+	  grid-template-rows:auto auto 1fr;
+	  gap:10px;
+	}
+
+	.panel {
+	  border:1px solid var(--green-soft);
+	  padding:10px 10px 8px;
+	  border-radius:10px;
+	  position:relative;
+	  overflow:hidden;
+	  box-shadow:0 0 18px rgba(76,255,123,0.25);
+	}
+
+	.panel-label {
+	  position:absolute;
+	  top:4px;
+	  left:10px;
+	  transform:translateY(-50%);
+	  background:#020403;
+	  padding:0 1px;
+	  font-family: "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+	  font-size:0.6rem;
+	  letter-spacing:0.18em;
+	  text-transform:uppercase;
+	  color:var(--green-soft);
+	}
+
+	/* Terminal */
+	#terminal {
+	  margin-top: 5px;
+	  height:clamp(80px,18vh,130px);
+	  overflow:hidden;
+	  font-family: "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+	  font-size:clamp(0.5rem,1.1vw,0.7rem);
+	}
+
+	.term-line {
+	  white-space:nowrap;
+	  opacity:0.85;
+	}
+
+	/* Info Panel */
+	.info-row {
+	  display:flex;
+	  margin-top: 5px;
+	  justify-content:space-between;
+	  gap:9px;
+	  margin-bottom:3px;
+	  font-family: "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+	  font-size:clamp(0.5rem,1.1vw,0.7rem);
+	}
+
+	.info-row span:first-child {
+	  color:var(--green-soft);
+	  letter-spacing:0.16em;
+	  text-transform:uppercase;
+	}
+
+	/* Hex Stream */
+	#hex {
+	  margin-top: 5px;
+	  font-family: "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+	  white-space:pre;
+	  line-height:1.2;
+	  opacity:0.85;
+	  font-size:clamp(0.5rem,1.1vw,0.7rem);
+	}
+
+	#bootScreen{
+	  position:fixed;
+	  inset:0;
+	  background:black;
+	  display:flex;
+	  justify-content:center;
+	  align-items:center;
+	  z-index:9999;
+	}
+
+	#bootBox{
+	  width:320px;
+	  color:#4cff7b;
+	  font-family:monospace;
+	}
+
+	#bootTitle{
+	  margin-bottom:12px;
+	  letter-spacing:0.2em;
+	}
+
+	#bootProgress{
+	  width:100%;
+	  height:6px;
+	  border:1px solid #4cff7b;
+	}
+
+	#bootBar{
+	  height:100%;
+	  width:0%;
+	  background:#4cff7b;
+	  box-shadow:0 0 10px #4cff7b;
+	}
+
+	#bootText{
+	  margin-top:10px;
+	  font-size:12px;
+	}
+
+	/* Responsive: Handy vertikal */
+	@media (max-width:700px) {
+	  #hud {
+		padding:14px 14px 18px;
+		border-radius:14px;
+	  }
+	 #time::after {
+	  right: 1.9em;
+	}
+	 #radar {
+	  left:280px;
+	  top:60px;
+	  width:80px;
+	  height:80px;
+	}
+
+	.datetime {
+	  margin-left: 10px;
+	  font-size: 9px;
+	  padding: 6px;
+	  width: 218px;
+	}
+	  main {
+		grid-template-columns:1fr;
+		grid-template-rows:auto auto;
+	  }
+
+	  #right {
+		grid-template-rows:auto auto auto;
+	  }
+
+	  header, footer {
+		justify-content:center;
+		text-align:center;
+	  }
+
+	  footer {
+		flex-direction:column;
+		align-items:center;
+
+			  }
+			}
+
+
+	/* Sehr kleine Höhe (z.B. Handy horizontal) */
+	@media (max-height:480px) {
+
+	  #hud {
+		padding:10px;
+		gap:6px;
+	  }
+
+	  header{
+		padding-left:15px;
+		padding-right:15px;
+		padding-top:8px;      /* Text etwas nach unten */
+	  }
+
+	  footer{
+		padding-left:20px;
+		padding-right:20px;
+		padding-bottom:8px;   /* Text etwas nach oben */
+	  }
+
+	  #time::after {
+		right:2.9em;
+	  }
+	.datetime {
+	  margin-left: 10px;
+	  font-size: 12px;
+	  padding: 6px;
+	  width: 268px;
+	}
+	  #terminal {
+		height:50px;
+	  }
+
+	 #radar {
+	  left:350px;
+	  top:102px;
+	  width:146px;
+	  height:146px;
+	}
+	}
+</style>
+</head>
+
+<body>
+<div id="bootScreen">
+
+<div id="bootBox">
+
+<div id="bootTitle">SYSTEM INITIALISIERT</div>
+
+<div id="bootProgress">
+<div id="bootBar"></div>
+</div>
+
+<div id="bootText"></div>
+
+</div>
+
+</div>
+<div id="hud">
+
+  <div id="grid"></div>
+  <div id="scanlines"></div>
+
+  <div class="corner tl"></div>
+  <div class="corner tr"></div>
+  <div class="corner bl"></div>
+  <div class="corner br"></div>
+
+  <header>
+    <span>SYS: SICHERE ZEITSCHNITTSTELLE</span>
+    <span id="tz">TZ: LOKAL</span>
+  </header>
+
+  <main>
+
+    <!-- CLOCK -->
+    <section id="clock">
+	<div class="datetime">
+  <div class="date"></div>
+</div>
+<div id="radar">
+  <canvas id="radarCanvas"></canvas>
+</div>
+      <div id="time">00:00:00</div>
+      <div id="date">0000-00-00</div>
+      <div id="meta">BETRIEBSZEIT: --:--:-- · SIGNAL: ---%</div>
+    </section>
+
+    <!-- RIGHT PANELS -->
+    <section id="right">
+
+      <!-- Terminal -->
+      <div class="panel">
+        <div class="panel-label">STATUS ZEIT</div>
+        <div id="terminal"></div>
+      </div>
+
+      <!-- Info -->
+      <div class="panel">
+        <div class="panel-label">ZIELFORSCHUNGSINFORMATIONEN</div>
+        <div class="info-row"><span>OBJECT-ID</span><span id="obj">OBJ-0000-00</span></div>
+        <div class="info-row"><span>AUFLÖSUNG</span><span id="res">1920×1080</span></div>
+        <div class="info-row"><span>ÜBEREINSTIMMEN</span><span id="match">0%</span></div>
+        <div class="info-row"><span>ERGEBNIS</span><span id="result">SCAN...</span></div>
+      </div>
+
+      <!-- Hex -->
+      <div class="panel">
+        <div class="panel-label">DATENSTROM</div>
+        <div id="hex"></div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <footer>
+    <span id="loc">ORT: UNBEKANNT</span>
+    <span id="epoch">EPOCHE:-----</span>
+    <span id="sys">CPU: ---% · RAM: ---%</span>
+	<span id="copy">© HUPSCLICK</span>
+  </footer>
+
+</div>
+
+<script>
+	function pad(n){
+	  return n.toString().padStart(2,"0");
+	}
+
+/* FORMAT TIME */
+	function formatTime(date){
+	  return `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+	}
+
+/* FORMAT DATE */
+	function formatDate(date){
+
+	  const DAYS = [
+		"Sonntag","Montag","Dienstag","Mittwoch",
+		"Donnerstag","Freitag","Samstag"
+	  ];
+
+	  const MONTHS = [
+		"Januar","Februar","März","April",
+		"Mai","Juni","Juli","August",
+		"September","Oktober","November","Dezember"
+	  ];
+
+	  return `${DAYS[date.getDay()]}, ${date.getDate()} ${MONTHS[date.getMonth()]} ${date.getFullYear()}`;
+	}
+
+
+/* CLOCK */
+	function updateClock(){
+
+	  const now = new Date();
+
+	  const timeElement = document.getElementById("time");
+	  const dateElement = document.querySelector(".date");
+	  const dateBox = document.getElementById("date");
+
+	  timeElement.textContent = formatTime(now);
+	  dateElement.textContent = formatDate(now);
+
+	  dateBox.textContent =
+		`${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()}`;
+
+	  document.getElementById("epoch").textContent =
+		"EPOCHE:" + Math.floor(now.getTime()/1000);
+
+	  if(!window.start){
+		window.start = now.getTime();
+	  }
+
+	  const diff = Math.floor((now.getTime()-window.start)/1000);
+
+	  const upH = pad(Math.floor(diff/3600));
+	  const upM = pad(Math.floor((diff%3600)/60));
+	  const upS = pad(diff%60);
+
+	  const signal = 80 + Math.round(Math.sin(diff/10)*15);
+
+	  document.getElementById("meta").textContent =
+		`BETRIEBSZEIT: ${upH}:${upM}:${upS} · SIGNAL: ${signal}%`;
+	}
+
+
+	/* CPU / RAM */
+	function updateSys(){
+
+	  const cpu = (40 + Math.random()*30).toFixed(1);
+	  const ram = (50 + Math.random()*20).toFixed(1);
+
+	  document.getElementById("sys").textContent =
+		`CPU: ${cpu}% · RAM: ${ram}%`;
+	}
+
+
+/* HEX STREAM */
+	function hexByte(){
+	  return Math.floor(Math.random()*256)
+		.toString(16)
+		.toUpperCase()
+		.padStart(2,"0");
+	}
+
+	function updateHex(){
+
+	  let out = "";
+
+	  for(let i=0;i<6;i++){
+
+		let addr = (0x7F00 + i*16)
+		  .toString(16)
+		  .toUpperCase()
+		  .padStart(4,"0");
+
+		let line = addr + ": ";
+
+		for(let j=0;j<12;j++){
+		  line += hexByte() + " ";
+		}
+
+		out += line + "\n";
+	  }
+
+	  document.getElementById("hex").textContent = out;
+	}
+
+
+/* INFO PANEL */
+	function updateInfo(){
+
+	  const match = (80 + Math.random()*15).toFixed(1);
+
+	  document.getElementById("match").textContent =
+		match + "%";
+
+	  const res = [
+		"1920×1080",
+		"2560×1440",
+		"3840×2160",
+		"1280×720"
+	  ];
+
+	  document.getElementById("res").textContent =
+		res[Math.floor(Date.now()/5000)%res.length];
+
+	  document.getElementById("obj").textContent =
+		"OBJ-" +
+		Math.floor(Math.random()*65535)
+		.toString(16)
+		.toUpperCase()
+		.padStart(4,"0") +
+		"-" +
+		pad(Math.floor(Math.random()*99));
+
+	  document.getElementById("result").textContent =
+		match > 92 ? "POSITIVE ID" :
+		match > 85 ? "GESPERRT" :
+		"SCAN...";
+	}
+
+
+/* BOOT SEQUENCE */
+
+	const boot = [
+	  "[BOOT] INITIALISIERE HUD...",
+	  "[CHK ] SYSTEMINTEGRITÄT OK",
+	  "[CLK ] ATOMZEIT SYNC OK",
+	  "[NET ] NTP-KNOTEN ONLINE",
+	  "[SEC ] VERSCHLÜSSELUNG AKTIV",
+	  "[PROC] STARTE MODULE",
+	  "[DONE] SYSTEM ONLINE"
+	];
+
+	let bootIndex = 0;
+	let bootDone = false;
+
+	function runBoot(){
+
+	  const term = document.getElementById("terminal");
+
+	  if(bootIndex < boot.length){
+
+		const div = document.createElement("div");
+		div.className = "term-line";
+		div.textContent = boot[bootIndex];
+
+		term.appendChild(div);
+		term.scrollTop = term.scrollHeight;
+
+		bootIndex++;
+
+		setTimeout(runBoot,300);
+
+	  } else {
+
+		bootDone = true;
+
+	  }
+	}
+
+
+/* LIVE TERMINAL */
+
+	function updateTerminal(){
+
+	  if(!bootDone) return;
+
+	  const term = document.getElementById("terminal");
+
+	  const div = document.createElement("div");
+	  div.className = "term-line";
+
+	  div.textContent =
+		"[TICK] " + document.getElementById("time").textContent;
+
+	  term.appendChild(div);
+
+	  if(term.children.length > 10){
+		term.removeChild(term.children[0]);
+	  }
+
+	}
+
+/* LOCATION */
+
+	function updateLoc(){
+
+	  const loc = document.getElementById("loc");
+
+	  if(!navigator.geolocation){
+
+		loc.textContent = "ORT: GPS NICHT VERFÜGBAR";
+		return;
+
+	  }
+
+	  navigator.geolocation.getCurrentPosition(
+
+		pos => {
+
+		  const lat = pos.coords.latitude.toFixed(4);
+		  const lon = pos.coords.longitude.toFixed(4);
+
+		  const latDir = lat >= 0 ? "N" : "S";
+		  const lonDir = lon >= 0 ? "E" : "W";
+
+		  loc.textContent =
+			`ORT: ${Math.abs(lat)}°${latDir} ${Math.abs(lon)}°${lonDir}`;
+
+		},
+
+		() => {
+
+		  loc.textContent = "ORT: ZUGRIFF VERWEIGERT";
+
+		}
+
+	  );
+
+	}
+
+
+	/* START */
+
+	runBoot();
+	updateLoc();
+
+	updateClock();
+	updateSys();
+	updateHex();
+	updateInfo();
+
+	setInterval(updateClock,1000);
+	setInterval(updateSys,500);
+	setInterval(updateHex,200);
+	setInterval(updateInfo,800);
+	setInterval(updateTerminal,1000);
+
+	/* RADAR CANVAS */
+
+	const radarCanvas = document.getElementById("radarCanvas");
+	const radarCtx = radarCanvas.getContext("2d");
+
+	radarCanvas.width = 220;
+	radarCanvas.height = 220;
+
+	let radarAngle = 0;
+
+	const targets = [];
+
+	for(let i=0;i<6;i++){
+
+	  targets.push({
+		x: Math.random()*220,
+		y: Math.random()*220,
+		life: Math.random()*200
+	  });
+
+	}
+
+	function drawRadar(){
+
+	  const w = radarCanvas.width;
+	  const h = radarCanvas.height;
+	  const cx = w/2;
+	  const cy = h/2;
+	  const r = w/2;
+
+	  radarCtx.clearRect(0,0,w,h);
+
+	  /* Kreis */
+
+	  radarCtx.strokeStyle="rgba(76,255,123,0.4)";
+	  radarCtx.lineWidth=1;
+
+	  radarCtx.beginPath();
+	  radarCtx.arc(cx,cy,r,0,Math.PI*2);
+	  radarCtx.stroke();
+
+	  /* Grid */
+
+	  radarCtx.beginPath();
+	  radarCtx.arc(cx,cy,r*0.66,0,Math.PI*2);
+	  radarCtx.stroke();
+
+	  radarCtx.beginPath();
+	  radarCtx.arc(cx,cy,r*0.33,0,Math.PI*2);
+	  radarCtx.stroke();
+
+	  radarCtx.beginPath();
+	  radarCtx.moveTo(cx,0);
+	  radarCtx.lineTo(cx,h);
+	  radarCtx.moveTo(0,cy);
+	  radarCtx.lineTo(w,cy);
+	  radarCtx.stroke();
+
+	  /* Sweep */
+
+	  const grad = radarCtx.createRadialGradient(cx,cy,0,cx,cy,r);
+
+	  grad.addColorStop(0,"rgba(76,255,123,0.4)");
+	  grad.addColorStop(1,"rgba(76,255,123,0)");
+
+	  radarCtx.fillStyle=grad;
+
+	  radarCtx.beginPath();
+	  radarCtx.moveTo(cx,cy);
+
+	  radarCtx.arc(
+		cx,
+		cy,
+		r,
+		radarAngle,
+		radarAngle+0.4
+	  );
+
+	  radarCtx.closePath();
+	  radarCtx.fill();
+
+	  radarAngle+=0.03;
+
+	  /* Targets */
+
+	  targets.forEach(t=>{
+
+		t.life--;
+
+		if(t.life<=0){
+
+		  t.x=Math.random()*w;
+		  t.y=Math.random()*h;
+		  t.life=200;
+
+		}
+
+		const dx=t.x-cx;
+		const dy=t.y-cy;
+
+		const dist=Math.sqrt(dx*dx+dy*dy);
+
+		if(dist<r){
+
+		  radarCtx.fillStyle="rgba(76,255,123,0.8)";
+		  radarCtx.beginPath();
+		  radarCtx.arc(t.x,t.y,2,0,Math.PI*2);
+		  radarCtx.fill();
+
+		}
+
+	  });
+
+	  requestAnimationFrame(drawRadar);
+
+	}
+
+	drawRadar();
+
+	/* BOOT SCREEN */
+
+	const bootLines=[
+	"INITIALISIERE ZEITSYSTEM",
+	"LADE RADAR MODUL",
+	"PRÜFE SENSORNETZ",
+	"SYNCHRONISIERE UHR",
+	"SYSTEM ONLINE"
+	];
+
+	let bootStep=0;
+	let bootProgress=0;
+
+	const bar=document.getElementById("bootBar");
+	const text=document.getElementById("bootText");
+
+	function runBootScreen(){
+
+	  bootProgress+=5;
+
+	  bar.style.width=bootProgress+"%";
+
+	  if(bootStep<bootLines.length && bootProgress%20===0){
+
+		text.innerHTML+=bootLines[bootStep]+"<br>";
+		bootStep++;
+
+	  }
+
+	  if(bootProgress<100){
+
+		setTimeout(runBootScreen,120);
+
+	  }else{
+
+		setTimeout(()=>{
+		  document.getElementById("bootScreen").style.display="none";
+		},500);
+
+	  }
+
+	}
+
+	runBootScreen();
+</script>
+
+</body>
+</html>
