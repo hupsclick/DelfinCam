@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="de"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Hupsclick">
+    <meta name="publisher" content="Hupsclick">
+    <meta name="description" content="WEBCAM HUPSCLICK FOTO VIDEO AUFNAHME Professionelle Überwachung">
+    <meta name="keywords" content="WEBCAM, HUPSCLICK, FOTO, VIDEO, AUFNAHME, Professionelle Überwachung, Deutsch">
+    <meta name="copyright" content="Hupsclick">
+    <meta property="og:title" content="WEBCAM HUPSCLICK FOTO VIDEO AUFNAHME Professionelle Überwachung">
+    <meta property="og:description" content="WEBCAM HUPSCLICK FOTO VIDEO AUFNAHME Professionelle Überwachung">
+    <meta property="og:type" content="website">
+    <link rel="shortcut icon" href="assets/icon.ico">
+  <title>🐬 Cam</title>
+  <style>
+:root {
+  --bg: #00695C;
+  --bg-elevated: transparent;
+  --text: #111111;
+  --accent: #2563eb;
+  --accent-soft: #dbeafe;
+  --border: #e5e7eb;
+  --danger: #b91c1c;
+  --shadow-soft: 0 10px 25px rgba(15, 23, 42, 0.08);
+}
+
+body.dark {
+  --bg: #020617;
+  --bg-elevated: #020617;
+  --text: #e5e7eb;
+  --accent: #60a5fa;
+  --accent-soft: #1d283a;
+  --border: #1f2937;
+  --shadow-soft: 0 10px 25px rgba(0, 0, 0, 0.7);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+h1 {
+  margin: 10px 0 5px 0;
+  font-size: 1.5rem;
+  letter-spacing: 2px;
+  color: #38bdf8;
+  text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.app-main {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 1.5rem;
+  padding: 1.5rem;
+}
+
+@media (max-width: 900px) {
+  .app-main {
+    grid-template-columns: 1fr;
+  }
+}
+
+ .control-group {
+  margin: 10px 0 5px 0;
+  font-size: 0.85rem;
+  letter-spacing: 2px;
+  color: #38bdf8;
+  text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+}
+
+.controls-panel,
+.preview-panel {
+  background: var(--bg-elevated);
+  border-radius: 1rem;
+  padding: 1.25rem;
+  box-shadow: var(--shadow-soft);
+  border: 1px solid var(--border);
+}
+
+.video-wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+  border-radius: 1rem;
+  overflow: hidden;
+  background: black;
+}
+
+#preview {
+  width: 100%;
+  height: auto;
+  display: block;
+  transform-origin: center;
+  transition: transform 0.2s ease;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.btn {
+  border: none;
+  border-radius: 999px;
+  padding: 0.45rem 0.9rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.btn.primary {
+  background: var(--accent);
+  color: white;
+}
+
+.btn.danger {
+  background: var(--danger);
+  color: white;
+}
+
+.app-footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem 1.5rem;
+  border-top: 1px solid var(--border);
+  color: #38bdf8;
+  text-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+}
+
+.btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 1.2rem;   /* vertikaler Abstand */
+  column-gap: 0.5rem; /* horizontaler Abstand */
+}
+
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <h1>🐬 Cam</h1>
+    <button id="darkModeToggle" class="btn secondary">Dark Mode</button>
+  </header>
+
+  <main class="app-main">
+    <section class="controls-panel">
+
+      <div class="control-group">
+        <label for="cameraSelect">Kamera auswählen</label>
+        <select id="cameraSelect"></select>
+      </div>
+
+      <div class="control-group">
+        <label for="micSelect">Mikrofon auswählen</label>
+        <select id="micSelect"></select>
+      </div>
+
+      <div class="control-group">
+        <span class="group-title">Foto</span>
+        <div class="btn-row">
+          <button id="capturePhotoBtn" class="btn primary">Sofortbild</button>
+          <button id="autoPhotoBtn" class="btn">Auto-Foto alle 5 Min</button>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <span class="group-title">Video</span>
+        <div class="btn-row">
+          <button id="recordVideoBtn" class="btn primary">Sofort Videoaufnahme</button>
+          <button id="autoVideoBtn" class="btn">Auto-Video alle 10 Min</button>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <span class="group-title">Zoom</span>
+        <div class="btn-row">
+          <button id="zoomOutBtn" class="btn">−</button>
+          <span id="zoomLevelLabel">100%</span>
+          <button id="zoomInBtn" class="btn">+</button>
+        </div>
+      </div>
+
+    </section>
+
+    <section class="preview-panel">
+      <div class="video-wrapper">
+        <video id="preview" autoplay playsinline muted></video>
+      </div>
+
+      <canvas id="photoCanvas" class="hidden"></canvas>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <span>© 2026 HUPSCLICK</span>
+    <span id="clock"></span>
+  </footer>
+
+  <script>
+const cameraSelect = document.getElementById("cameraSelect");
+const micSelect = document.getElementById("micSelect");
+const preview = document.getElementById("preview");
+const photoCanvas = document.getElementById("photoCanvas");
+
+const capturePhotoBtn = document.getElementById("capturePhotoBtn");
+const autoPhotoBtn = document.getElementById("autoPhotoBtn");
+const recordVideoBtn = document.getElementById("recordVideoBtn");
+const autoVideoBtn = document.getElementById("autoVideoBtn");
+
+const zoomInBtn = document.getElementById("zoomInBtn");
+const zoomOutBtn = document.getElementById("zoomOutBtn");
+const zoomLevelLabel = document.getElementById("zoomLevelLabel");
+
+const darkModeToggle = document.getElementById("darkModeToggle");
+const clockEl = document.getElementById("clock");
+
+let currentStream = null;
+let mediaRecorder = null;
+let recordedChunks = [];
+
+let autoPhotoInterval = null;
+let autoVideoInterval = null;
+
+let isAutoPhoto = false;
+let isAutoVideo = false;
+let isRecording = false;
+
+let zoomLevel = 1;
+
+function germanDate() {
+  const d = new Date();
+  const day = String(d.getDate()).padStart(2, "0");
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const year = d.getFullYear();
+  return `${day}-${month}-${year}`;
+}
+
+async function loadDevices() {
+  const devices = await navigator.mediaDevices.enumerateDevices();
+
+  cameraSelect.innerHTML = "";
+  micSelect.innerHTML = "";
+
+  devices.forEach((d, i) => {
+    if (d.kind === "videoinput") {
+      const opt = document.createElement("option");
+      opt.value = d.deviceId;
+      opt.textContent = d.label || `Kamera ${i}`;
+      cameraSelect.appendChild(opt);
+    }
+
+    if (d.kind === "audioinput") {
+      const opt = document.createElement("option");
+      opt.value = d.deviceId;
+      opt.textContent = d.label || `Mikrofon ${i}`;
+      micSelect.appendChild(opt);
+    }
+  });
+
+  startStream(cameraSelect.value, micSelect.value);
+}
+
+async function startStream(camId, micId) {
+  if (currentStream) {
+    currentStream.getTracks().forEach(t => t.stop());
+  }
+
+  const constraints = {
+    video: { deviceId: camId ? { exact: camId } : undefined },
+    audio: {
+      deviceId: micId ? { exact: micId } : undefined,
+      echoCancellation: true,
+      noiseSuppression: true,
+      autoGainControl: true
+    }
+  };
+
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia(constraints);
+
+    preview.muted = true;
+    preview.volume = 0;
+
+    preview.srcObject = stream;
+    currentStream = stream;
+
+  } catch (err) {
+    alert("Kamera oder Mikrofon konnte nicht gestartet werden.");
+  }
+}
+
+cameraSelect.addEventListener("change", () => {
+  startStream(cameraSelect.value, micSelect.value);
+});
+
+micSelect.addEventListener("change", () => {
+  startStream(cameraSelect.value, micSelect.value);
+});
+
+function savePhoto() {
+  const ctx = photoCanvas.getContext("2d");
+  photoCanvas.width = 640;
+  photoCanvas.height = 480;
+
+  ctx.drawImage(preview, 0, 0, 640, 480);
+
+  const ts = germanDate();
+
+  photoCanvas.toBlob(blob => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+
+    a.href = url;
+    a.download = `HUPSCLICK_Foto_${ts}.png`;
+    a.click();
+
+    URL.revokeObjectURL(url);
+  });
+}
+
+
+capturePhotoBtn.addEventListener("click", savePhoto);
+
+autoPhotoBtn.addEventListener("click", () => {
+  if (!isAutoPhoto) {
+    autoPhotoInterval = setInterval(savePhoto, 5 * 60 * 1000);
+    isAutoPhoto = true;
+    autoPhotoBtn.classList.add("primary");
+    autoPhotoBtn.textContent = "Auto-Foto läuft";
+  } else {
+    clearInterval(autoPhotoInterval);
+    isAutoPhoto = false;
+    autoPhotoBtn.classList.remove("primary");
+    autoPhotoBtn.textContent = "Auto-Foto alle 5 Min";
+  }
+});
+
+function startRecording() {
+  recordedChunks = [];
+  mediaRecorder = new MediaRecorder(currentStream, { mimeType: "video/webm" });
+
+  mediaRecorder.ondataavailable = e => {
+    if (e.data.size > 0) recordedChunks.push(e.data);
+  };
+
+mediaRecorder.onstop = () => {
+  const blob = new Blob(recordedChunks, { type: "video/webm" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+
+  const ts = germanDate();
+
+  a.href = url;
+  a.download = `HUPSCLICK_Video_${ts}.webm`;
+  a.click();
+
+  URL.revokeObjectURL(url);
+};
+
+
+  mediaRecorder.start();
+  isRecording = true;
+  recordVideoBtn.classList.add("danger");
+  recordVideoBtn.textContent = "Aufnahme stoppen";
+}
+
+function stopRecording() {
+  if (mediaRecorder && isRecording) {
+    mediaRecorder.stop();
+    isRecording = false;
+    recordVideoBtn.classList.remove("danger");
+    recordVideoBtn.textContent = "Sofort Videoaufnahme";
+  }
+}
+
+recordVideoBtn.addEventListener("click", () => {
+  if (!isRecording) startRecording();
+  else stopRecording();
+});
+
+autoVideoBtn.addEventListener("click", () => {
+  if (!isAutoVideo) {
+    const recordOnce = () => {
+      startRecording();
+      setTimeout(stopRecording, 30000);
+    };
+
+    recordOnce();
+    autoVideoInterval = setInterval(recordOnce, 10 * 60 * 1000);
+
+    isAutoVideo = true;
+    autoVideoBtn.classList.add("primary");
+    autoVideoBtn.textContent = "Auto-Video läuft";
+  } else {
+    clearInterval(autoVideoInterval);
+    isAutoVideo = false;
+    autoVideoBtn.classList.remove("primary");
+    autoVideoBtn.textContent = "Auto-Video alle 10 Min";
+  }
+});
+
+function updateZoom() {
+  preview.style.transform = `scale(${zoomLevel})`;
+  zoomLevelLabel.textContent = `${Math.round(zoomLevel * 100)}%`;
+}
+
+zoomInBtn.addEventListener("click", () => {
+  zoomLevel = Math.min(3, zoomLevel + 0.1);
+  updateZoom();
+});
+
+zoomOutBtn.addEventListener("click", () => {
+  zoomLevel = Math.max(1, zoomLevel - 0.1);
+  updateZoom();
+});
+
+function applyDarkModeFromStorage() {
+  const stored = localStorage.getItem("hupsclick-dark-mode");
+  if (stored === "true") document.body.classList.add("dark");
+}
+
+applyDarkModeFromStorage();
+
+darkModeToggle.addEventListener("click", () => {
+  document.body.classList.toggle("dark");
+  localStorage.setItem(
+    "hupsclick-dark-mode",
+    document.body.classList.contains("dark")
+  );
+});
+
+function updateClock() {
+  const now = new Date();
+  const fmt = new Intl.DateTimeFormat("de-DE", {
+    timeZone: "Europe/Berlin",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit"
+  });
+  clockEl.textContent = fmt.format(now);
+}
+
+setInterval(updateClock, 1000);
+updateClock();
+
+navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+  .then(loadDevices)
+  .catch(() => alert("Zugriff auf Kamera/Mikrofon verweigert."));
+
+  </script>
+</body>
+</html>
